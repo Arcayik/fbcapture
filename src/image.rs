@@ -16,7 +16,7 @@ pub fn convert_pixels(buf: &mut [u8;CAP]) -> [u8;CAP]
     *buf
 }
 
-pub fn image(buf: [u8;CAP], file: i32)
+pub fn write_image(buf: [u8;CAP], file: i32)
 {
     image::save_buffer(format!("{FILEPATH}/default/img/{file}.png"), &buf,
         1024, 600, image::ColorType::Rgba8)

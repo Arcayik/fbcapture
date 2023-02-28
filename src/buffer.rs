@@ -10,8 +10,10 @@ pub fn get_buffer(file: &str) -> [u8;CAP]
     buf
 }
 
-pub fn buffer_to_file(buf: [u8;CAP], file: u32)
+pub fn buffer_to_file(buf: [u8;CAP], project: &String, file: u32)
 {
-    File::create(format!("{FILEPATH}/default/{file}")).unwrap()
+    // Check that project dir exists
+    File::create(format!("{FILEPATH}/{project}/{file}"))
+        .expect("(buffer_to_file) File not found")
         .write_all(&buf).unwrap();
 }

@@ -1,17 +1,40 @@
 mod buffer; use crate::buffer::*;
 mod image; use crate::image::*;
 
+use std::path::Path;
+
 use std::time::{Duration, Instant};
 
 const CAP: usize = 1024 * 600 * 4;
+// Get framebuffer data
 const FILEPATH: &str = "/home/blakely/.local/cache/fbvideo/";
 
 fn main () {
+    // cmdline args
+    let args: Vec<String> = std::env::args().collect();
+    let query = &args[1];
+    let default = String::from("tmp");
+    let project = args.get(2).unwrap_or(&default);
+
+    // check if project exists
+    match Path::new(format!("{FILEPATH}/{project}").as_str()).exists() {
+        true => println!("path exists"),
+        false => println!("path doesn't exist")
+    }
+
+    match query.as_str() {
+        "record" => record(project),
+        "compile" => compile(project),
+        _ => panic!("invalid command line argument")
+    };
+}
+
+fn record(project: &String) {
     let mut total: Duration = Duration::ZERO;
 
     for num in 1..30 {
         let start = Instant::now();
-        buffer_to_file(get_buffer("/dev/fb0"), num);
+        buffer_to_file(get_buffer("/dev/fb0"), project, num);
         let duration = start.elapsed();
         total += duration;
 
@@ -20,12 +43,12 @@ fn main () {
         println!("avg: {}", framerate);
         //num += 1;
     }
+}
 
+fn compile(project: &String) {
     for num in 1..30 {
         let mut buffer = get_buffer(format!("{FILEPATH}/default/{num}").as_str());
-        
-        image(convert_pixels(&mut buffer), num);
+        write_image(convert_pixels(&mut buffer), num);
     }
-    //println!("{:?}", total);
 }
-// Take command line arguments on whether to record or compile
+
