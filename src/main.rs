@@ -11,10 +11,8 @@ const FILEPATH: &str = "/home/blakely/.local/cache/fbvideo/";
 
 fn main () {
     // cmdline args
-    let args: Vec<String> = std::env::args().collect();
-    let query = &args[1];
-    let default = String::from("tmp");
-    let project = args.get(2).unwrap_or(&default);
+    let query = std::env::args().nth(1).expect("No arguments given");
+    let project = std::env::args().nth(2).unwrap_or(String::from("tmp"));
 
     // check if project exists
     match Path::new(format!("{FILEPATH}/{project}").as_str()).exists() {
@@ -23,8 +21,8 @@ fn main () {
     }
 
     match query.as_str() {
-        "record" => record(project),
-        "compile" => compile(project),
+        "record" => record(&project),
+        "compile" => compile(&project),
         _ => panic!("invalid command line argument")
     };
 }
